@@ -56,9 +56,9 @@ int UMain(int argc, UChar* argv[])
 		}
 		wstring sStmtNew = sTxt.substr(uPos0, uPos1 - uPos0);
 		uPos0 = uPos1 + wcslen(L"\r\n--------------------------------------");
-		if (sStmtNew != sStmtOld)
+		if (sStmtNew == sStmtOld)
 		{
-			UPrintf(USTR("%") PRIUS USTR("\n"), WToU(sNum).c_str());
+			UPrintf(USTR("%") PRIUS USTR("\n%") PRIUS USTR("\n"), WToU(sNum).c_str(), WToU(sStmtNew).c_str());
 		}
 	}
 	return 0;
