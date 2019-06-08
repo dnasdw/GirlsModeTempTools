@@ -32,6 +32,7 @@ int UMain(int argc, UChar* argv[])
 	wstring sTxt = U16ToW(pTemp + 1);
 	delete[] pTemp;
 	wstring sTxtNew;
+	bool bNeedTranslate = false;
 	wstring::size_type uPos0 = 0;
 	while ((uPos0 = sTxt.find(L"No.", uPos0)) != wstring::npos)
 	{
@@ -56,10 +57,33 @@ int UMain(int argc, UChar* argv[])
 		}
 		wstring sStmtNew = sTxt.substr(uPos0, uPos1 - uPos0);
 		uPos0 = uPos1 + wcslen(L"\r\n--------------------------------------");
+		if (!sTxtNew.empty())
+		{
+			sTxtNew += L"\r\n\r\n";
+		}
+		sTxtNew += sNum;
+		sTxtNew += L"\r\n--------------------------------------\r\n";
+		sTxtNew += sStmtOld;
+		sTxtNew += L"\r\n======================================\r\n";
+		sTxtNew += sStmtNew;
+		sTxtNew += L"\r\n--------------------------------------\r\n";
 		if (sStmtNew == sStmtOld)
 		{
 			UPrintf(USTR("%") PRIUS USTR("\n%") PRIUS USTR("\n"), WToU(sNum).c_str(), WToU(sStmtNew).c_str());
+			sTxtNew += L"[translate me]\r\n";
+			bNeedTranslate = true;
 		}
+	}
+	if (bNeedTranslate)
+	{
+		fp = UFopen(argv[1], USTR("wb"), false);
+		if (fp == nullptr)
+		{
+			return 1;
+		}
+		fwrite("\xFF\xFE", 2, 1, fp);
+		fwrite(sTxtNew.c_str(), 2, sTxtNew.size(), fp);
+		fclose(fp);
 	}
 	return 0;
 }
